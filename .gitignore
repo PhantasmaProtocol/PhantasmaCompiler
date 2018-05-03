@@ -1,0 +1,7 @@
+CompilerSuite/obj/
+CompilerSuite/bin/
+.vs/CompilerSuite/
+packages/
+LunarCompiler/obj/
+PhantasmaCompiler/bin/
+PhantasmaCompiler/obj/
