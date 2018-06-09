@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Phantasma.Codegen.Core
+namespace Phantasma.CodeGen.Core
 {
     public enum LiteralKind
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Phantasma.Codegen.Core
+namespace Phantasma.CodeGen.Core
 {
     public enum Visibility
     {

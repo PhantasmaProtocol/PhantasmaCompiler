@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Phantasma.Codegen.Core
+namespace Phantasma.CodeGen.Core
 {
     public class Instruction
     {
