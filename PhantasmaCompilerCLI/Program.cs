@@ -1,9 +1,10 @@
-﻿using Phantasma.Codegen.Core;
+﻿using Phantasma.CodeGen.Core;
+using Phantasma.CodeGen.Tools;
 using Phantasma.Utils;
 using System;
 using System.IO;
 
-namespace Phantasma.Codegen
+namespace Phantasma.CodeGen
 {
     class Program
     {
@@ -42,6 +43,15 @@ namespace Phantasma.Codegen
             var generator = new ByteCodeGenerator(tree, instructions);
             Console.WriteLine(generator.Script.ByteToHex());
 
+            Console.WriteLine();
+            Console.WriteLine("****DISASSEMBLE***");
+            var disasm = Disassembler.Execute(generator.Script);
+            foreach (var entry in disasm)
+            {
+                Console.WriteLine(entry.ToString());
+            }
+
+            Console.WriteLine("****END***");
             Console.ReadKey();
         }
     }
