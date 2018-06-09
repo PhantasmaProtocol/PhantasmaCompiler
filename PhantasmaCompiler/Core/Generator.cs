@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Phantasma.Codegen.Core;
+using Phantasma.CodeGen.Core;
 using Phantasma.Utils;
 using Phantasma.VM;
 
-namespace Phantasma.Codegen
+namespace Phantasma.CodeGen
 {
     public class ByteCodeGenerator
     {
@@ -43,8 +43,9 @@ namespace Phantasma.Codegen
                     throw new Exception("Invalid jump offset");
                 }
 
-                var offset = _offsets[entry.Value];
-                _output.Patch(entry.Key, (ushort) offset);
+                var offset = _offsets[entry.Value]; 
+                var targetOfs = entry.Key + 1; // skip the opcode byte
+                _output.Patch(targetOfs, (ushort) offset);
             }
 
             /*foreach (var i in _output)
