@@ -1,4 +1,5 @@
 ﻿using Phantasma.Codegen.Core;
+using Phantasma.Utils;
 using System;
 using System.IO;
 
@@ -37,20 +38,9 @@ namespace Phantasma.Codegen
             }
 
             Console.WriteLine();
-            Console.WriteLine("****OPCODES***");
-            var phantasma = new PhantasmaCompiler(tree, instructions);
-            Instruction anotation = null;
-            foreach (var entry in phantasma.Instructions)
-            {
-                if (anotation != entry.source)
-                {
-                    anotation = entry.source;
-                    Console.WriteLine("// " + anotation);
-                }
-                Console.WriteLine(entry);
-            }
-
-            phantasma.Export("output");
+            Console.WriteLine("****SCRIPT***");
+            var generator = new ByteCodeGenerator(tree, instructions);
+            Console.WriteLine(generator.Script.ByteToHex());
 
             Console.ReadKey();
         }

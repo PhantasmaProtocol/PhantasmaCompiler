@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Numerics;
 using Phantasma.Codegen.Core;
-using Phantasma.VM;
 using Phantasma.Utils;
+using Phantasma.VM;
 
 namespace Phantasma.Codegen
 {
@@ -17,8 +17,8 @@ namespace Phantasma.Codegen
 
         private Dictionary<string, byte> _registerTable = new Dictionary<string, byte>();
 
-        private byte[] _script;
-
+        public byte[] Script { get; private set; }
+        
         public ByteCodeGenerator(ModuleNode tree, List<Instruction> instructions)
         {
             this.tree = tree;
@@ -68,7 +68,7 @@ namespace Phantasma.Codegen
                 }
             }*/
 
-            _script = _output.ToScript();
+            Script = _output.ToScript();
         }
 
         private MethodNode FindMethod(string name)

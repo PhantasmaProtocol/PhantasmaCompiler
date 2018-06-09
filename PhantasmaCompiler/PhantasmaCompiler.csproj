@@ -48,17 +48,22 @@
   <ItemGroup>
     <Compile Include="Core\Compiler.cs" />
     <Compile Include="Core\CompilerNode.cs" />
+    <Compile Include="Core\Generator.cs" />
     <Compile Include="Core\Lexer.cs" />
     <Compile Include="Core\Parser.cs" />
-    <Compile Include="Core\Utils.cs" />
     <Compile Include="PhantasmaOpcodes.cs" />
-    <Compile Include="PhantasmaCompiler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\PhantasmaChain\PhantasmaChain\PhantasmaChain.csproj">
+      <Project>{646D7ED3-97C2-4F68-9162-ACF6E4D9AD4E}</Project>
+      <Name>PhantasmaChain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
