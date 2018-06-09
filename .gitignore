@@ -5,3 +5,5 @@ packages/
 LunarCompiler/obj/
 PhantasmaCompiler/bin/
 PhantasmaCompiler/obj/
+PhantasmaCompilerCLI/bin/
+PhantasmaCompilerCLI/obj/

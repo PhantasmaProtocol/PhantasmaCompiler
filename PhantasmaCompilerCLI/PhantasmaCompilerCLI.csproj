@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ADD0180A-B574-4CE3-9D63-2741A7BB1C6C}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Phantasma.Compiler</RootNamespace>
-    <AssemblyName>PhantasmaCompiler</AssemblyName>
+    <ProjectGuid>{0E44A572-D372-4539-B76C-6004FE89C702}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>PhantasmaCompilerCLI</RootNamespace>
+    <AssemblyName>PhantasmaCompilerCLI</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -31,16 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LunarParser, Version=1.0.31.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LunarParser.1.0.31\lib\net461\LunarParser.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,21 +42,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Compiler.cs" />
-    <Compile Include="Core\CompilerNode.cs" />
-    <Compile Include="Core\Generator.cs" />
-    <Compile Include="Core\Lexer.cs" />
-    <Compile Include="Core\Parser.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\PhantasmaChain\PhantasmaChain\PhantasmaChain.csproj">
       <Project>{646D7ED3-97C2-4F68-9162-ACF6E4D9AD4E}</Project>
       <Name>PhantasmaChain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PhantasmaCompiler\PhantasmaCompiler.csproj">
+      <Project>{add0180a-b574-4ce3-9d63-2741a7bb1c6c}</Project>
+      <Name>PhantasmaCompiler</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
