@@ -108,29 +108,29 @@ namespace Phantasma.CodeGen
             // for conditional jumps, fetch the appropriate register for the conditional value
             if (Opcode != Opcode.JMP)
             {
-                data[data.Length - 1] = FetchRegister(i.a.name);
+                data[data.Length - 1] = FetchRegister(i.a.target);
             }
 
             var ofs = _output.Emit(Opcode, data);
 
             // store which label to jump to
-            _jumps[ofs] = i.b.name;
+            _jumps[ofs] = i.b.target;
         }
 
         private void InsertOp(Instruction i, Opcode Opcode)
         {
             if (i.b != null)
             {
-                var a = FetchRegister(i.a.name);
-                var b = FetchRegister(i.b.name);
-                var dst = FetchRegister(i.name);
+                var a = FetchRegister(i.a.target);
+                var b = FetchRegister(i.b.target);
+                var dst = FetchRegister(i.target);
 
                 _output.Emit(Opcode, new byte[] { a, b, dst });
             }
             else
             {
-                var src = FetchRegister(i.a.name);
-                var dst = FetchRegister(i.name);
+                var src = FetchRegister(i.a.target);
+                var dst = FetchRegister(i.target);
 
                 _output.Emit(Opcode, new byte[] { src, dst });
             }
@@ -143,7 +143,14 @@ namespace Phantasma.CodeGen
                 case Instruction.Opcode.Label:
                     {
                         var ofs = _output.Emit(Opcode.NOP);
-                        _offsets[i.name] = ofs;
+                        _offsets[i.target] = ofs;
+                        break;
+                    }
+
+                case Instruction.Opcode.Pop:
+                    {
+                        var reg = FetchRegister(i.target);
+                        _output.Emit(Opcode.POP, new byte[] { reg });
                         break;
                     }
 
@@ -155,21 +162,21 @@ namespace Phantasma.CodeGen
                             {
                                 case LiteralKind.String:
                                     {
-                                        var reg = FetchRegister(i.name);
+                                        var reg = FetchRegister(i.target);
                                         _output.EmitLoad(reg, (string)i.literal.value);
                                         break;
                                     }
 
                                 case LiteralKind.Boolean:
                                     {
-                                        var reg = FetchRegister(i.name);
+                                        var reg = FetchRegister(i.target);
                                         _output.EmitLoad(reg, (bool)i.literal.value);
                                         break;
 
                                     }
                                 case LiteralKind.Integer:
                                     {
-                                        var reg = FetchRegister(i.name);
+                                        var reg = FetchRegister(i.target);
                                         _output.EmitLoad(reg, (BigInteger)i.literal.value);
                                         break;
                                     }
@@ -178,15 +185,9 @@ namespace Phantasma.CodeGen
                             }
                         }
                         else
-                        if (i.variable != null)
                         {
-                            var reg = FetchRegister(i.name);
-                            _output.EmitLoad(reg, "var_load_missing!");
-                        }
-                        else
-                        {
-                            var src = FetchRegister(i.a.name);
-                            var dst = FetchRegister(i.name);
+                            var src = i.varName != null ? FetchRegister(i.varName) : FetchRegister(i.a.target);
+                            var dst = FetchRegister(i.target);
                             _output.EmitMove(src, dst);
                         }
                         break;
@@ -215,8 +216,8 @@ namespace Phantasma.CodeGen
 
                 case Instruction.Opcode.Not:
                     {
-                        var src = FetchRegister(i.a.name);
-                        var dst = FetchRegister(i.name);
+                        var src = FetchRegister(i.a.target);
+                        var dst = FetchRegister(i.target);
                         _output.Emit(Opcode.NOT, new byte[] { src, dst} ); break;
                     }
                     

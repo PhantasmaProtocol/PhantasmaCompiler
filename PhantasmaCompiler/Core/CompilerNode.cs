@@ -227,6 +227,21 @@ namespace Phantasma.CodeGen.Core
             return base.ToString() + "=>" + this.name;
         }
 
+        public List<Instruction> Emit(Compiler compiler)
+        {
+            var result = new List<Instruction>();
+
+            foreach (var arg in arguments)
+            {
+                var reg = compiler.AllocRegister();
+                compiler.varMap[arg.decl.identifier] = reg;
+                result.Add(new Instruction() { source = this, target = reg, op = Instruction.Opcode.Pop });
+            }
+
+            var temp = body.Emit(compiler);
+            result.AddRange(temp);
+            return result;
+        }
     }
 
     public class ArgumentNode : CompilerNode
@@ -283,7 +298,7 @@ namespace Phantasma.CodeGen.Core
         public override List<Instruction> Emit(Compiler compiler)
         {
             var temp = expr.Emit(compiler);
-            temp.Add(new Instruction() { source = this, name = this.identifier, a = temp.Last(), op = Instruction.Opcode.Assign});
+            temp.Add(new Instruction() { source = this, target = this.identifier, a = temp.Last(), op = Instruction.Opcode.Assign});
             return temp;
         }
     }
@@ -299,7 +314,7 @@ namespace Phantasma.CodeGen.Core
         public override List<Instruction> Emit(Compiler compiler)
         {
             var temp = expr.Emit(compiler);
-            temp.Add(new Instruction() { source = this, name = "ret", a = temp.Last(), op = Instruction.Opcode.Return });
+            temp.Add(new Instruction() { source = this, target = "ret", a = temp.Last(), op = Instruction.Opcode.Return });
             return temp;
         }
 
@@ -333,24 +348,24 @@ namespace Phantasma.CodeGen.Core
             var temp = this.expr.Emit(compiler);
 
             var first = this.trueBranch.Emit(compiler);
-            Instruction end = new Instruction() { source = this, name = compiler.AllocLabel(), op = Instruction.Opcode.Label };
+            Instruction end = new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Label };
             Instruction middle = null;
 
             if (falseBranch != null)
             {
-                middle = new Instruction() { source = this, name = compiler.AllocLabel(), op = Instruction.Opcode.Label };
+                middle = new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Label };
                 var second = this.falseBranch.Emit(compiler);
 
-                temp.Add(new Instruction() { source = this, name = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfTrue, a = first.Last(), b = middle });
+                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfTrue, a = first.Last(), b = middle });
                 temp.AddRange(second);
 
-                temp.Add(new Instruction() { source = this, name = compiler.AllocLabel(), op = Instruction.Opcode.Jump, b = end});
+                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Jump, b = end});
                 temp.Add(middle);
                 temp.AddRange(first);
             }
             else
             {
-                temp.Add(new Instruction() { source = this, name = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfFalse, a = first.Last(), b = end });
+                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfFalse, a = first.Last(), b = end });
                 temp.AddRange(first);
             }
 
@@ -390,29 +405,29 @@ namespace Phantasma.CodeGen.Core
         public override List<Instruction> Emit(Compiler compiler)
         {
             var temp = new List<Instruction>();
-            Instruction end = new Instruction() { source = this, name = compiler.AllocLabel(), op = Instruction.Opcode.Label };
+            Instruction end = new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Label };
 
-            Instruction next = new Instruction() { source = this, name = compiler.AllocLabel(), op = Instruction.Opcode.Label };
+            Instruction next = new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Label };
 
             var first = this.expr.Emit(compiler);
             temp.AddRange(first);
 
-            var id = new Instruction() { source = this, name = compiler.AllocRegister(), op = Instruction.Opcode.Assign, a = first.Last()};
+            var id = new Instruction() { source = this, target = compiler.AllocRegister(), op = Instruction.Opcode.Assign, a = first.Last()};
             temp.Add(id);
 
             foreach (var entry in cases)
             {
-                var lit = new Instruction() { source = this, name = compiler.AllocRegister(), op = Instruction.Opcode.Assign, literal = entry.Key };
+                var lit = new Instruction() { source = this, target = compiler.AllocRegister(), op = Instruction.Opcode.Assign, literal = entry.Key };
                 temp.Add(lit);
 
-                var cmp = new Instruction() { source = this, name = compiler.AllocRegister(), op = Instruction.Opcode.Equals, a = id, b = lit };
+                var cmp = new Instruction() { source = this, target = compiler.AllocRegister(), op = Instruction.Opcode.Equals, a = id, b = lit };
                 temp.Add(cmp);
-                temp.Add(new Instruction() { source = this, name = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfFalse, a = cmp, b = next });
+                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfFalse, a = cmp, b = next });
                 var body = entry.Value.Emit(compiler);
                 temp.AddRange(body);
-                temp.Add(new Instruction() { source = this, name = compiler.AllocLabel(), op = Instruction.Opcode.Jump, b = end });
+                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Jump, b = end });
                 temp.Add(next);
-                next = new Instruction() { source = this, name = compiler.AllocLabel(), op = Instruction.Opcode.Label };
+                next = new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Label };
             }
 
             if (defaultBranch != null)
@@ -482,8 +497,10 @@ namespace Phantasma.CodeGen.Core
                 this.decl = ResolveIdentifier(this.identifier);
             }
 
+            var varLocation = compiler.varMap[this.decl.identifier];
+
             var temp = new List<Instruction>();
-            temp.Add(new Instruction() { source = this, name = compiler.AllocRegister(), variable = this.decl, op = Instruction.Opcode.Assign});
+            temp.Add(new Instruction() { source = this, target = compiler.AllocRegister(), varName = varLocation, op = Instruction.Opcode.Assign});
             return temp;
         }
     }
@@ -505,7 +522,7 @@ namespace Phantasma.CodeGen.Core
         public override List<Instruction> Emit(Compiler compiler)
         {
             var temp = new List<Instruction>();
-            temp.Add(new Instruction() { source = this, name = compiler.AllocRegister(), literal = this, op = Instruction.Opcode.Assign });
+            temp.Add(new Instruction() { source = this, target = compiler.AllocRegister(), literal = this, op = Instruction.Opcode.Assign });
             return temp;
         }
     }
@@ -544,7 +561,7 @@ namespace Phantasma.CodeGen.Core
             }
 
             var temp = this.term.Emit(compiler);
-            temp.Add(new Instruction() { source = this, name = compiler.AllocRegister(), a = temp.Last(), op = opcode });
+            temp.Add(new Instruction() { source = this, target = compiler.AllocRegister(), a = temp.Last(), op = opcode });
             return temp;
         }
     }
@@ -591,7 +608,7 @@ namespace Phantasma.CodeGen.Core
             var temp = new List<Instruction>();
             temp.AddRange(left);
             temp.AddRange(right);
-            temp.Add(new Instruction() { source = this, name = compiler.AllocRegister(), a = left.Last(), op = opcode, b = right.Last() });
+            temp.Add(new Instruction() { source = this, target = compiler.AllocRegister(), a = left.Last(), op = opcode, b = right.Last() });
 
             return temp;
         }

@@ -1,11 +1,30 @@
 ﻿using Phantasma.CodeGen.Core;
 using Phantasma.CodeGen.Tools;
 using Phantasma.Utils;
+using Phantasma.VM;
 using System;
 using System.IO;
 
 namespace Phantasma.CodeGen
 {
+    public class TestVM : VirtualMachine
+    {
+        public TestVM(byte[] script) : base(script)
+        {
+
+        }
+
+        public override bool ExecuteInterop(string method)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ExecutionContext LoadContext(byte[] key)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -50,6 +69,12 @@ namespace Phantasma.CodeGen
             {
                 Console.WriteLine(entry.ToString());
             }
+
+            var vm = new TestVM(generator.Script);
+            vm.stack.Push(new VMObject().SetValue(2));
+            vm.stack.Push(new VMObject().SetValue(3));
+            vm.stack.Push(new VMObject().SetValue("add"));
+            vm.Execute();
 
             Console.WriteLine("****END***");
             Console.ReadKey();

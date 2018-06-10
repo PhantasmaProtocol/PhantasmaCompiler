@@ -9,6 +9,8 @@ namespace Phantasma.CodeGen.Core
             Label,
             Return,
             Assign,
+            Pop,
+            Push,
             Add,
             Sub,
             Mul,
@@ -32,16 +34,16 @@ namespace Phantasma.CodeGen.Core
         }
 
         public CompilerNode source;
-        public string name;
+        public string target;
         public LiteralExpressionNode literal;
-        public DeclarationNode variable;
+        public string varName; // HACK: Fix me later
         public Instruction a;
         public Instruction b;
         public Opcode op;
 
         public override string ToString()
         {
-            string s = name;
+            string s = target;
 
             if (op == Opcode.Label)
             {
@@ -55,17 +57,27 @@ namespace Phantasma.CodeGen.Core
 
             if (op == Opcode.JumpIfFalse)
             {
-                return $"if !{a.name} goto {b}";
+                return $"if !{a.target} goto {b}";
             }
 
             if (op == Opcode.JumpIfTrue)
             {
-                return $"if {a.name} goto {b}";
+                return $"if {a.target} goto {b}";
+            }
+
+            if (op == Opcode.Pop)
+            {
+                return $"pop {target}";
+            }
+
+            if (op == Opcode.Push)
+            {
+                return $"push {target}";
             }
 
             if (op == Opcode.Return)
             {
-                return $"ret {a.name}";
+                return $"ret {a.target}";
             }
 
             if (op == Opcode.Assign && literal != null)
@@ -77,9 +89,9 @@ namespace Phantasma.CodeGen.Core
                 return s + $" := {literal.value}";
             }
 
-            if (op == Opcode.Assign && variable != null)
+            if (op == Opcode.Assign && varName != null)
             {
-                return s + $" := [{variable.identifier}]";
+                return s + $" := {varName}";
             }
 
             string symbol;
@@ -103,23 +115,23 @@ namespace Phantasma.CodeGen.Core
 
             if (b != null)
             {
-                s += $" := {a.name} {symbol} {b.name}";
+                s += $" := {a.target} {symbol} {b.target}";
             }
             else
             if (a != null)
             {
                 if (op == Opcode.Assign)
                 {
-                    s += $" := {a.name}";
+                    s += $" := {a.target}";
                 }
                 else
                 if (symbol != null)
                 {
-                    s += $" := {symbol}{a.name}";
+                    s += $" := {symbol}{a.target}";
                 }
                 else
                 {
-                    s += $" := {op}{a.name}";
+                    s += $" := {op}{a.target}";
                 }
             }
             else
@@ -136,17 +148,21 @@ namespace Phantasma.CodeGen.Core
         private int registerIndex;
         private int labelIndex;
 
+        public Dictionary<string, string> varMap = new Dictionary<string, string>();
+
         public string AllocRegister()
         {
+            var temp = "t"+registerIndex.ToString();
             registerIndex++;
-            return "t"+registerIndex.ToString();
+            return temp;
         }
 
 
         public string AllocLabel()
         {
+            var temp = "p"+labelIndex.ToString();
             labelIndex++;
-            return "p"+labelIndex.ToString();
+            return temp;
         }
 
         private void ProcessBlock(List<Instruction> instructions, BlockNode block)
@@ -172,7 +188,7 @@ namespace Phantasma.CodeGen.Core
             {
                 foreach (var method in entry.methods)
                 {
-                    var temp = method.body.Emit(this);
+                    var temp = method.Emit(this);
                     instructions.AddRange(temp);
                 }
             }
