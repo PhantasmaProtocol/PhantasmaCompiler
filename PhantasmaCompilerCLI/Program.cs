@@ -29,9 +29,15 @@ namespace Phantasma.CodeGen
     {
         static void Main(string[] args)
         {
-            var src = File.ReadAllText("../../Examples/hello.cs");
+            var targetFile = "../../Examples/hello.cs";
+            var extension = Path.GetExtension(targetFile);
 
-            var tokens = Lexer.Execute(src);
+            var src = File.ReadAllText(targetFile);
+
+            var language = LanguageProcessor.GetLanguage(extension);
+            var processor = LanguageProcessor.GetProcessor(language);
+
+            var tokens = processor.Lexer.Execute(src);
 
             /*
             Console.WriteLine("****TOKENS***");
@@ -44,7 +50,7 @@ namespace Phantasma.CodeGen
             Console.WriteLine();
             Console.WriteLine("****TREE***");
 
-            var tree = Parser.Execute(tokens);
+            var tree = processor.Parser.Execute(tokens);
             tree.Visit((x, level) => Console.WriteLine(new String('\t', level) + x.ToString()));
 
             var compiler = new Compiler();

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Phantasma.Numerics;
-using Phantasma.CodeGen.Core;
 using Phantasma.VM.Utils;
 
-namespace Phantasma.CodeGen
+namespace Phantasma.CodeGen.Core
 {
     public class ByteCodeGenerator
     {

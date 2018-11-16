@@ -1,12 +1,9 @@
-using Phantasma.SmartContract.Framework.Services.Phantasma;
-using Phantasma.SmartContract.Framework.Services.System;
-using Phantasma.SmartContract.Framework;
-using System.Numerics;
+using Phantasma.SmartContract.Core;
 using System;
 
-namespace Phantasma.SmartContract
+namespace HelloWorld
 {
-    public class Contract1 : Framework.SmartContract
+    public class MyContract : Contract
     {
         public static int Main(string operation, int a, int b)
         {

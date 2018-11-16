@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{ADD0180A-B574-4CE3-9D63-2741A7BB1C6C}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Phantasma.Compiler</RootNamespace>
+    <RootNamespace>Phantasma.CodeGen</RootNamespace>
     <AssemblyName>PhantasmaCompiler</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -51,9 +51,13 @@
   <ItemGroup>
     <Compile Include="Core\Compiler.cs" />
     <Compile Include="Core\CompilerNode.cs" />
+    <Compile Include="Core\DefaultLexer.cs" />
     <Compile Include="Core\Generator.cs" />
+    <Compile Include="Core\LanguageProcessor.cs" />
     <Compile Include="Core\Lexer.cs" />
     <Compile Include="Core\Parser.cs" />
+    <Compile Include="Languages\CSharpProcessor.cs" />
+    <Compile Include="Languages\SolidityProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +65,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\PhantasmaChain\Phantasma.Core\Phantasma.Core.csproj">
+      <Project>{E273A012-85C1-42E8-A7A4-5F60649381A1}</Project>
+      <Name>Phantasma.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\PhantasmaChain\Phantasma.Numerics\Phantasma.Numerics.csproj">
       <Project>{99CE5AD6-AEDC-4A71-8882-359A1C687950}</Project>
       <Name>Phantasma.Numerics</Name>

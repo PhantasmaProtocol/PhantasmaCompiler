@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace Phantasma.CodeGen.Core
 {
@@ -48,55 +47,11 @@ namespace Phantasma.CodeGen.Core
         }
     }
 
-    public static class Lexer
+    public abstract class Lexer
     {
-        public static bool IsOperator(string s)
-        {
-            switch (s)
-            {
-                case "+":
-                case "-":
-                case "++":
-                case "--":
-                case "*":
-                case "/":
-                case "%":
-                case "!":
-                case "=":
-                case "==":
-                case ">>":
-                case "<<":
-                case "<":
-                case ">":
-                case "<=":
-                case ">=":
-                case "|":
-                case "&":
-                case "||":
-                case "&&":
+        public abstract bool IsOperator(string s);
 
-                    return true;
-                default: return false;
-            }
-        }
-
-        public static bool IsDelimiter(char c)
-        {
-            switch (c)
-            {
-                case ',':
-                case ';':
-                case ':':
-                case '{':
-                case '}':
-                case '[':
-                case ']':
-                case '(':
-                case ')':
-                    return true;
-                default: return false;
-            }
-        }
+        public abstract bool IsDelimiter(char c);
 
         public static bool IsLiteral(Token.Kind kind)
         {
@@ -114,72 +69,6 @@ namespace Phantasma.CodeGen.Core
         }
 
 
-        public static Token Tokenize(string s, int index)
-        {
-            if (s.Length == 1 && IsDelimiter(s[0]))
-            {
-                return new Token(Token.Kind.Delimiter, s, index);
-            }
-
-            if (s.Equals("true") || s.Equals("false"))
-            {
-                return new Token(Token.Kind.Boolean, s, index);
-            }
-
-            if (s.Equals("null"))
-            {
-                return new Token(Token.Kind.Null, s, index);
-            }
-
-            if (IsOperator(s))
-            {
-                return new Token(Token.Kind.Operator, s, index);
-            }
-
-            switch (s)
-            {
-                case "var":
-                case "using":
-                case "return":
-                case "namespace":
-                case "public":
-                case "private":
-                case "protected":
-                case "internal":
-                case "static":
-                case "virtual":
-                case "abstract":
-                case "class":
-                case "struct":
-                case "if":
-                case "else":
-                case "while":
-                case "do":
-                case "switch":
-                case "case":
-                    {
-                        return new Token(Token.Kind.Keyword, s, index);
-                    }
-            }
-
-            if (Regex.Match(s, "^[0-9]*$").Success)
-            {
-                return new Token(Token.Kind.Integer, s, index);
-            }
-
-            if (Regex.Match(s, @"^[0-9]*(?:\.[0-9]*)?$").Success)
-            {
-                return new Token(Token.Kind.Float, s, index);
-            }
-
-            if (Regex.Match(s, @"^(?:((?!\d)\w+(?:\.(?!\d)\w+)*)\.)?((?!\d)\w+)$").Success)
-            {
-                return new Token(Token.Kind.Identifier, s, index);
-            }
-
-            return new Token(Token.Kind.Invalid, s, index);
-        }
-
         private enum State
         {
             Normal,
@@ -187,7 +76,7 @@ namespace Phantasma.CodeGen.Core
             Comment
         }
 
-        private static void BreakIntoTokens(List<Token> tokens, ref string s, ref int baseIndex, ref int index, Token.Kind kind = Token.Kind.Invalid)
+        private void BreakIntoTokens(List<Token> tokens, ref string s, ref int baseIndex, ref int index, Token.Kind kind = Token.Kind.Invalid)
         {
             if (s.Length > 0)
             {
@@ -199,7 +88,9 @@ namespace Phantasma.CodeGen.Core
             baseIndex = index;
         }
 
-        public static List<Token> Execute(string src)
+        protected abstract Token Tokenize(string s, int index);
+
+        public List<Token> Execute(string src)
         {
             string s = "";
             char last = '\0';
