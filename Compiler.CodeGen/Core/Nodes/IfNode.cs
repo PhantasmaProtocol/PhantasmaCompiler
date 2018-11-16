@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Phantasma.CodeGen.Core.Nodes
+{
+    public class IfNode : StatementNode
+    {
+        public ExpressionNode expr;
+        public StatementNode trueBranch;
+        public StatementNode falseBranch;
+
+        public IfNode(BlockNode owner) : base(owner)
+        {
+        }
+
+        public override void Visit(Action<CompilerNode, int> visitor, int level = 0)
+        {
+            base.Visit(visitor, level);
+            expr.Visit(visitor, level + 1);
+            trueBranch.Visit(visitor, level + 1);
+            if (falseBranch != null) falseBranch.Visit(visitor, level + 1);
+        }
+
+        public override List<Instruction> Emit(Compiler compiler)
+        {
+            var temp = this.expr.Emit(compiler);
+
+            var first = this.trueBranch.Emit(compiler);
+            Instruction end = new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Label };
+            Instruction middle = null;
+
+            if (falseBranch != null)
+            {
+                middle = new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Label };
+                var second = this.falseBranch.Emit(compiler);
+
+                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfTrue, a = temp.Last(), b = middle });
+                temp.AddRange(second);
+
+                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Jump, b = end});
+                temp.Add(middle);
+                temp.AddRange(first);
+            }
+            else
+            {
+                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfFalse, a = temp.Last(), b = end });
+                temp.AddRange(first);
+            }
+
+            temp.Add(end);
+
+            return temp;
+        }
+    }
+}

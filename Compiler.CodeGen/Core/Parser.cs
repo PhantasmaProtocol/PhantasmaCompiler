@@ -1,4 +1,5 @@
-﻿using Phantasma.Numerics;
+﻿using Phantasma.CodeGen.Core.Nodes;
+using Phantasma.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Linq;

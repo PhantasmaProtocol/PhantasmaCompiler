@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Phantasma.CodeGen.Core.Nodes;
+using System.Collections.Generic;
 
 namespace Phantasma.CodeGen.Core
 {

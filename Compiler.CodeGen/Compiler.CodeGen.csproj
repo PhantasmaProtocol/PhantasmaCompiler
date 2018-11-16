@@ -50,12 +50,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Compiler.cs" />
-    <Compile Include="Core\CompilerNode.cs" />
+    <Compile Include="Core\Nodes\ArgumentNode.cs" />
+    <Compile Include="Core\Nodes\AssignmentNode.cs" />
+    <Compile Include="Core\Nodes\BinaryExpressionNode.cs" />
+    <Compile Include="Core\Nodes\BlockNode.cs" />
+    <Compile Include="Core\Nodes\ClassNode.cs" />
+    <Compile Include="Core\Nodes\CompilerNode.cs" />
     <Compile Include="Core\DefaultLexer.cs" />
     <Compile Include="Core\DefaultParser.cs" />
     <Compile Include="Core\Generator.cs" />
     <Compile Include="Core\LanguageProcessor.cs" />
     <Compile Include="Core\Lexer.cs" />
+    <Compile Include="Core\Nodes\DeclarationNode.cs" />
+    <Compile Include="Core\Nodes\ExpressionNode.cs" />
+    <Compile Include="Core\Nodes\IfNode.cs" />
+    <Compile Include="Core\Nodes\ImportNode.cs" />
+    <Compile Include="Core\Nodes\LiteralExpressionNode.cs" />
+    <Compile Include="Core\Nodes\MethodNode.cs" />
+    <Compile Include="Core\Nodes\ModuleNode.cs" />
+    <Compile Include="Core\Nodes\ReturnNode.cs" />
+    <Compile Include="Core\Nodes\StatementNode.cs" />
+    <Compile Include="Core\Nodes\SwitchNode.cs" />
+    <Compile Include="Core\Nodes\UnaryExpressionNode.cs" />
+    <Compile Include="Core\Nodes\VariableExpressionNode.cs" />
+    <Compile Include="Core\Nodes\WhileNode.cs" />
     <Compile Include="Core\Parser.cs" />
     <Compile Include="Languages\CSharpProcessor.cs" />
     <Compile Include="Languages\SolidityProcessor.cs" />

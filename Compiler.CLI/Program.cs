@@ -1,4 +1,5 @@
 ﻿using Phantasma.CodeGen.Core;
+using Phantasma.CodeGen.Core.Nodes;
 using Phantasma.Cryptography;
 using Phantasma.Numerics;
 using Phantasma.VM;
