@@ -133,9 +133,19 @@ namespace Phantasma.CodeGen.Languages
 
                     ExpectDelimiter(tokens, ref index, "{");
 
-                    ParseContractContent(tokens, ref index, name, module);
+                    var classNode = new ClassNode(module);
+                    classNode.name = name;
+
+                    ParseContractContent(tokens, ref index, classNode, module);
 
                     ExpectDelimiter(tokens, ref index, "}");
+
+                    if (module.body != null)
+                    {
+                        throw new ParserException(tokens.Last(), ParserException.Kind.InternalError);
+                    }
+
+                    module.body = GenerateEntryPoint(module, classNode.methods);
                 }
                 else
                 {
@@ -147,10 +157,8 @@ namespace Phantasma.CodeGen.Languages
             return module;
         }
 
-        private void ParseContractContent(List<Token> tokens, ref int index, string name, ModuleNode module)
+        private void ParseContractContent(List<Token> tokens, ref int index, ClassNode classNode, ModuleNode module)
         {
-            var classNode = new ClassNode(module);
-            classNode.name = name;
             classNode.visibility = Visibility.Public;
             classNode.isAbstract = false;
             classNode.isStatic = false;

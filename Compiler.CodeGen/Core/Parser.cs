@@ -10,6 +10,7 @@ namespace Phantasma.CodeGen.Core
     {
         public enum Kind
         {
+            InternalError,
             EndOfStream,
             UnexpectedToken,
             ExpectedToken,
@@ -18,7 +19,7 @@ namespace Phantasma.CodeGen.Core
             ExpectedOperator,
             ExpectedKeyword,
             ExpectedType,
-            DuplicatedLabel
+            DuplicatedLabel,
         }
 
         public readonly Token token;

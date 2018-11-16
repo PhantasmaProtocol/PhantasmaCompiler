@@ -300,5 +300,43 @@ namespace Phantasma.CodeGen.Core
 
             return term;
         }
+
+        protected StatementNode GenerateEntryPoint(CompilerNode owner, IEnumerable<MethodNode> methods)
+        {
+            var result = new BlockNode(owner);
+
+            var opDecl = new DeclarationNode(result);
+            opDecl.identifier = "operation";
+            opDecl.type = new TypeNode(opDecl, TypeKind.String);
+
+            foreach (var method in methods)
+            {
+                if (method.visibility != Visibility.Public)
+                {
+                    continue;
+                }
+
+                var ifExpr = new IfNode(result);
+                var cmpExpr = new BinaryExpressionNode(ifExpr);
+                var leftExpr = new VariableExpressionNode(cmpExpr);
+                leftExpr.declaration = opDecl;
+
+                var rightExpr = new LiteralExpressionNode(cmpExpr);
+                rightExpr.kind = LiteralKind.String;
+                rightExpr.value = method.name;
+
+                cmpExpr.left = leftExpr;
+                cmpExpr.right = rightExpr;
+                cmpExpr.@operator = OperatorKind.Equals;
+
+                var jmpSt = new CallNode(ifExpr);
+
+                ifExpr.expr = cmpExpr;
+                ifExpr.trueBranch = jmpSt;
+            }
+
+            result.statements.Add(new ExitNode(result)); 
+            return result;
+        }
     }
 }

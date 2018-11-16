@@ -68,9 +68,11 @@
     <Compile Include="Core\Nodes\LiteralExpressionNode.cs" />
     <Compile Include="Core\Nodes\MethodNode.cs" />
     <Compile Include="Core\Nodes\ModuleNode.cs" />
+    <Compile Include="Core\Nodes\ExitNode.cs" />
     <Compile Include="Core\Nodes\ReturnNode.cs" />
     <Compile Include="Core\Nodes\StatementNode.cs" />
     <Compile Include="Core\Nodes\SwitchNode.cs" />
+    <Compile Include="Core\Nodes\CallNode.cs" />
     <Compile Include="Core\Nodes\TypeNode.cs" />
     <Compile Include="Core\Nodes\UnaryExpressionNode.cs" />
     <Compile Include="Core\Nodes\VariableExpressionNode.cs" />

@@ -128,6 +128,16 @@ namespace Phantasma.CodeGen.Languages
                 ParseClassContent(tokens, ref index, classNode);
                 ExpectDelimiter(tokens, ref index, "}");
 
+                if (classNode.parent == "Contract")
+                {
+                    if (module.body != null)
+                    {
+                        throw new ParserException(tokens.Last(), ParserException.Kind.InternalError);
+                    }
+
+                    module.body = GenerateEntryPoint(module, classNode.methods);
+                }
+
             } while (tokens[index].text != "}");
         }
 

@@ -34,7 +34,6 @@ namespace Phantasma.CodeGen.Core.Nodes
         Xor,
     }
 
-
     public abstract class CompilerNode
     {
         public readonly CompilerNode Owner;
