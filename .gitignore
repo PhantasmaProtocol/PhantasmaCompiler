@@ -3,7 +3,9 @@ CompilerSuite/bin/
 .vs/CompilerSuite/
 packages/
 LunarCompiler/obj/
-PhantasmaCompiler/bin/
-PhantasmaCompiler/obj/
-PhantasmaCompilerCLI/bin/
-PhantasmaCompilerCLI/obj/
+Compiler.CodeGen/bin/
+Compiler.CodeGen/obj/
+Compiler.CLI/bin/
+Compiler.CLI/obj/
+Compiler.Tests/bin/
+Compiler.Tests/obj/

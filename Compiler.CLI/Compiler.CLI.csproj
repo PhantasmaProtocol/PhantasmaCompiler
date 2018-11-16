@@ -62,7 +62,7 @@
       <Project>{28F00969-A451-4DD1-BDF4-1F5BDDB7B425}</Project>
       <Name>Phantasma.VM</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PhantasmaCompiler\PhantasmaCompiler.csproj">
+    <ProjectReference Include="..\Compiler.CodeGen\Compiler.CodeGen.csproj">
       <Project>{add0180a-b574-4ce3-9d63-2741a7bb1c6c}</Project>
       <Name>PhantasmaCompiler</Name>
     </ProjectReference>
