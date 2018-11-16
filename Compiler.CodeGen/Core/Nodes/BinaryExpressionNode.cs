@@ -70,6 +70,11 @@ namespace Phantasma.CodeGen.Core.Nodes
 
         protected override bool ValidateSemantics()
         {
+            if (string.IsNullOrEmpty(this.op))
+            {
+                return false;
+            }
+
             return this.GetKind() != TypeKind.Unknown;
         }
     }

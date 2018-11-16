@@ -165,7 +165,23 @@ namespace Phantasma.CodeGen.Core
                                 case LiteralKind.Integer:
                                     {
                                         var reg = FetchRegister(i.target);
-                                        _output.EmitLoad(reg, (BigInteger)i.literal.value);
+                                        BigInteger val;
+
+                                        if (i.literal.value is BigInteger)
+                                        {
+                                            val = (BigInteger)i.literal.value;
+                                        }
+                                        else 
+                                        if (i.literal.value is int)
+                                        {
+                                            val = new BigInteger((int)i.literal.value);
+                                        }
+                                        else
+                                        {
+                                            throw new Exception($"Could not convert {i.literal.value.GetType().Name} to BigInteger");
+                                        }
+
+                                        _output.EmitLoad(reg, val);
                                         break;
                                     }
 
