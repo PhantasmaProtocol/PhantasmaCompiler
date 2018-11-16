@@ -52,6 +52,7 @@
     <Compile Include="Core\Compiler.cs" />
     <Compile Include="Core\CompilerNode.cs" />
     <Compile Include="Core\DefaultLexer.cs" />
+    <Compile Include="Core\DefaultParser.cs" />
     <Compile Include="Core\Generator.cs" />
     <Compile Include="Core\LanguageProcessor.cs" />
     <Compile Include="Core\Lexer.cs" />

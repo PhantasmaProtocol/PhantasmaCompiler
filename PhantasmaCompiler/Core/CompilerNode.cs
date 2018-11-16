@@ -356,7 +356,7 @@ namespace Phantasma.CodeGen.Core
                 middle = new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Label };
                 var second = this.falseBranch.Emit(compiler);
 
-                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfTrue, a = first.Last(), b = middle });
+                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfTrue, a = temp.Last(), b = middle });
                 temp.AddRange(second);
 
                 temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.Jump, b = end});
@@ -365,7 +365,7 @@ namespace Phantasma.CodeGen.Core
             }
             else
             {
-                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfFalse, a = first.Last(), b = end });
+                temp.Add(new Instruction() { source = this, target = compiler.AllocLabel(), op = Instruction.Opcode.JumpIfFalse, a = temp.Last(), b = end });
                 temp.AddRange(first);
             }
 

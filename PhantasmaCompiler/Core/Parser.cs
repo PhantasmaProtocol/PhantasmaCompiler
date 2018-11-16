@@ -57,7 +57,10 @@ namespace Phantasma.CodeGen.Core
 
         protected bool ExpectOptional(List<Token> tokens, ref int index, string value)
         {
-            if (index >= tokens.Count) throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
+            if (index >= tokens.Count)
+            {
+                throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
+            }
 
             var token = tokens[index];
             if (token.text == value)
@@ -182,44 +185,6 @@ namespace Phantasma.CodeGen.Core
         protected string ExpectOperator(List<Token> tokens, ref int index)
         {
             return ExpectValue(tokens, ref index, Token.Kind.Operator, ParserException.Kind.ExpectedOperator);
-        }
-
-        protected virtual int GetOperatorPrecedence(string op)
-        {
-            switch (op)
-            {
-                case "||":
-                case "&&":
-                    return 0;
-
-                case "==":
-                case "!=":
-                    return 1;
-
-                case "<":
-                case ">":
-                case "<=":
-                case ">=":
-                    return 2;
-
-                case "<<":
-                case ">>":
-                    return 3;
-
-                case "+":
-                case "-":
-                    return 4;
-
-                case "*":
-                case "/":
-                case "%":
-                    return 5;
-
-                case "!":
-                    return 6;
-
-                default: throw new Exception("Invalid operator");
-            }
         }
 
     }
