@@ -1,6 +1,6 @@
 ﻿using Phantasma.CodeGen.Core;
-using Phantasma.CodeGen.Tools;
-using Phantasma.Utils;
+using Phantasma.Cryptography;
+using Phantasma.Numerics;
 using Phantasma.VM;
 using System;
 using System.IO;
@@ -14,12 +14,12 @@ namespace Phantasma.CodeGen
 
         }
 
-        public override bool ExecuteInterop(string method)
+        public override ExecutionState ExecuteInterop(string method)
         {
-            throw new NotImplementedException();
+            return ExecutionState.Fault;
         }
 
-        public override ExecutionContext LoadContext(byte[] key)
+        public override ExecutionContext LoadContext(Address address)
         {
             throw new NotImplementedException();
         }
@@ -60,12 +60,13 @@ namespace Phantasma.CodeGen
             Console.WriteLine();
             Console.WriteLine("****SCRIPT***");
             var generator = new ByteCodeGenerator(tree, instructions);
-            Console.WriteLine(generator.Script.ByteToHex());
+            Console.WriteLine(Base16.Encode(generator.Script));
 
             Console.WriteLine();
             Console.WriteLine("****DISASSEMBLE***");
-            var disasm = Disassembler.Execute(generator.Script);
-            foreach (var entry in disasm)
+            var disasm = new Disassembler(generator.Script);
+
+            foreach (var entry in disasm.Instructions)
             {
                 Console.WriteLine(entry.ToString());
             }

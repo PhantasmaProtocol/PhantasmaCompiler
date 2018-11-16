@@ -50,9 +50,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\PhantasmaChain\PhantasmaChain\PhantasmaChain.csproj">
-      <Project>{646D7ED3-97C2-4F68-9162-ACF6E4D9AD4E}</Project>
-      <Name>PhantasmaChain</Name>
+    <ProjectReference Include="..\..\PhantasmaChain\Phantasma.Cryptography\Phantasma.Cryptography.csproj">
+      <Project>{A20F20D6-E8B7-47F1-88DC-9937E8996F46}</Project>
+      <Name>Phantasma.Cryptography</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PhantasmaChain\Phantasma.Numerics\Phantasma.Numerics.csproj">
+      <Project>{99CE5AD6-AEDC-4A71-8882-359A1C687950}</Project>
+      <Name>Phantasma.Numerics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PhantasmaChain\Phantasma.VM\Phantasma.VM.csproj">
+      <Project>{28F00969-A451-4DD1-BDF4-1F5BDDB7B425}</Project>
+      <Name>Phantasma.VM</Name>
     </ProjectReference>
     <ProjectReference Include="..\PhantasmaCompiler\PhantasmaCompiler.csproj">
       <Project>{add0180a-b574-4ce3-9d63-2741a7bb1c6c}</Project>

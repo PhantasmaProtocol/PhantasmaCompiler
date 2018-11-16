@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
+using Phantasma.Numerics;
 using Phantasma.CodeGen.Core;
-using Phantasma.Utils;
-using Phantasma.VM;
+using Phantasma.VM.Utils;
 
 namespace Phantasma.CodeGen
 {
@@ -12,8 +11,6 @@ namespace Phantasma.CodeGen
         private ModuleNode tree;
 
         private ScriptBuilder _output = new ScriptBuilder();
-        private Dictionary<string, int> _offsets = new Dictionary<string, int>();
-        private Dictionary<int, string> _jumps = new Dictionary<int, string>();
 
         private Dictionary<string, byte> _registerTable = new Dictionary<string, byte>();
 
@@ -34,18 +31,6 @@ namespace Phantasma.CodeGen
             foreach (var i in instructions)
             {
                 TranslateInstruction(i);
-            }
-
-            foreach (var entry in _jumps)
-            {
-                if (!_offsets.ContainsKey(entry.Value))
-                {
-                    throw new Exception("Invalid jump offset");
-                }
-
-                var offset = _offsets[entry.Value]; 
-                var targetOfs = entry.Key + 1; // skip the opcode byte
-                _output.Patch(targetOfs, (ushort) offset);
             }
 
             /*foreach (var i in _output)
@@ -100,24 +85,25 @@ namespace Phantasma.CodeGen
             return register;
         }
 
-        private void InsertJump(Instruction i, Opcode Opcode)
+        private void InsertJump(Instruction i, VM.Opcode Opcode)
         {
-            var len = Opcode == Opcode.JMP ? 2 : 3;
-            var data = new byte[len];
+            byte reg;
 
             // for conditional jumps, fetch the appropriate register for the conditional value
-            if (Opcode != Opcode.JMP)
+            if (Opcode != VM.Opcode.JMP)
             {
-                data[data.Length - 1] = FetchRegister(i.a.target);
+                reg = FetchRegister(i.a.target);
+            }
+            else
+            {
+                reg = 0;
             }
 
-            var ofs = _output.Emit(Opcode, data);
-
-            // store which label to jump to
-            _jumps[ofs] = i.b.target;
+            var label = i.b.ToString();
+            _output.EmitJump(Opcode, label);
         }
 
-        private void InsertOp(Instruction i, Opcode Opcode)
+        private void InsertOp(Instruction i, VM.Opcode Opcode)
         {
             if (i.b != null)
             {
@@ -142,15 +128,14 @@ namespace Phantasma.CodeGen
             {
                 case Instruction.Opcode.Label:
                     {
-                        var ofs = _output.Emit(Opcode.NOP);
-                        _offsets[i.target] = ofs;
+                        _output.EmitLabel(i.target);
                         break;
                     }
 
                 case Instruction.Opcode.Pop:
                     {
                         var reg = FetchRegister(i.target);
-                        _output.Emit(Opcode.POP, new byte[] { reg });
+                        _output.Emit(VM.Opcode.POP, new byte[] { reg });
                         break;
                     }
 
@@ -194,31 +179,31 @@ namespace Phantasma.CodeGen
 
                     }
 
-                case Instruction.Opcode.Add: { InsertOp(i, Opcode.ADD); break; }
-                case Instruction.Opcode.Sub: { InsertOp(i, Opcode.SUB); break; }
-                case Instruction.Opcode.Mul: { InsertOp(i, Opcode.MUL); break; }
-                case Instruction.Opcode.Div: { InsertOp(i, Opcode.DIV); break; }
-                case Instruction.Opcode.Mod: { InsertOp(i, Opcode.MOD); break; }
-                case Instruction.Opcode.Shr: { InsertOp(i, Opcode.SHR); break; }
-                case Instruction.Opcode.Shl: { InsertOp(i, Opcode.SHL); break; }
-                case Instruction.Opcode.Equals: { InsertOp(i, Opcode.EQUAL); break; }
-                case Instruction.Opcode.LessThan: { InsertOp(i, Opcode.LT); break; }
-                case Instruction.Opcode.GreaterThan: { InsertOp(i, Opcode.GT); break; }
-                case Instruction.Opcode.LessOrEqualThan: { InsertOp(i, Opcode.LTE); break; }
-                case Instruction.Opcode.GreaterOrEqualThan: { InsertOp(i, Opcode.GTE); break; }
+                case Instruction.Opcode.Add: { InsertOp(i, VM.Opcode.ADD); break; }
+                case Instruction.Opcode.Sub: { InsertOp(i, VM.Opcode.SUB); break; }
+                case Instruction.Opcode.Mul: { InsertOp(i, VM.Opcode.MUL); break; }
+                case Instruction.Opcode.Div: { InsertOp(i, VM.Opcode.DIV); break; }
+                case Instruction.Opcode.Mod: { InsertOp(i, VM.Opcode.MOD); break; }
+                case Instruction.Opcode.Shr: { InsertOp(i, VM.Opcode.SHR); break; }
+                case Instruction.Opcode.Shl: { InsertOp(i, VM.Opcode.SHL); break; }
+                case Instruction.Opcode.Equals: { InsertOp(i, VM.Opcode.EQUAL); break; }
+                case Instruction.Opcode.LessThan: { InsertOp(i, VM.Opcode.LT); break; }
+                case Instruction.Opcode.GreaterThan: { InsertOp(i, VM.Opcode.GT); break; }
+                case Instruction.Opcode.LessOrEqualThan: { InsertOp(i, VM.Opcode.LTE); break; }
+                case Instruction.Opcode.GreaterOrEqualThan: { InsertOp(i, VM.Opcode.GTE); break; }
 
 
-                case Instruction.Opcode.Jump: InsertJump(i, Opcode.JMP); break;
-                case Instruction.Opcode.JumpIfFalse: InsertJump(i, Opcode.JMPNOT); break;
-                case Instruction.Opcode.JumpIfTrue: InsertJump(i, Opcode.JMPIF); break;
+                case Instruction.Opcode.Jump: InsertJump(i, VM.Opcode.JMP); break;
+                case Instruction.Opcode.JumpIfFalse: InsertJump(i, VM.Opcode.JMPNOT); break;
+                case Instruction.Opcode.JumpIfTrue: InsertJump(i, VM.Opcode.JMPIF); break;
 
-                case Instruction.Opcode.Return: _output.Emit(Opcode.RET); break;  // not correct?
+                case Instruction.Opcode.Return: _output.Emit(VM.Opcode.RET); break;  // not correct?
 
                 case Instruction.Opcode.Not:
                     {
                         var src = FetchRegister(i.a.target);
                         var dst = FetchRegister(i.target);
-                        _output.Emit(Opcode.NOT, new byte[] { src, dst} ); break;
+                        _output.Emit(VM.Opcode.NOT, new byte[] { src, dst} ); break;
                     }
                     
 
