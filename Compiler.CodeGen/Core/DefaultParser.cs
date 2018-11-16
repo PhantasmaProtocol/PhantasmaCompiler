@@ -47,6 +47,35 @@ namespace Phantasma.CodeGen.Core
             }
         }
 
+        protected OperatorKind ParseOperator(string text)
+        {
+            switch (text)
+            {
+                case "+": return OperatorKind.Addition;
+                case "-": return OperatorKind.Subtraction;
+                case "*": return OperatorKind.Multiplication;
+                case "/": return OperatorKind.Division;
+                case "%": return OperatorKind.Modulus;
+
+                case "++": return OperatorKind.Increment;
+                case "--": return OperatorKind.Decrement;
+
+                case "==": return OperatorKind.Equals;
+                case "!=": return OperatorKind.Different;
+                case ">": return OperatorKind.Great;
+                case "<": return OperatorKind.Less;
+                case ">=": return OperatorKind.GreatOrEqual;
+                case "<=": return OperatorKind.LessOrEqual;
+
+                case "!": return OperatorKind.Not;
+                case "&&": return OperatorKind.And;
+                case "||": return OperatorKind.Or;
+                case "^": return OperatorKind.Xor;
+
+                default: return OperatorKind.Unknown;
+            }
+        }
+
         protected StatementNode ParseStatement(List<Token> tokens, ref int index, CompilerNode owner)
         {
             BlockNode block = null;
@@ -257,7 +286,7 @@ namespace Phantasma.CodeGen.Core
 
                     expr.left = term;
 
-                    expr.op = ExpectOperator(tokens, ref index);
+                    expr.@operator = ParseOperator(ExpectOperator(tokens, ref index));
 
                     expr.right = ParseExpression(tokens, ref index, expr, p);
 

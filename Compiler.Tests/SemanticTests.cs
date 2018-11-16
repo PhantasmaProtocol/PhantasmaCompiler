@@ -107,7 +107,7 @@ namespace Phantasma.Tests
 
             binaryExpr.left = literalA;
             binaryExpr.right = literalB;
-            binaryExpr.op = "+";
+            binaryExpr.@operator = OperatorKind.Addition;
 
             returnSt.expr = binaryExpr;
             method.body = returnSt;
@@ -140,7 +140,7 @@ namespace Phantasma.Tests
 
             binaryExpr.left = literalA;
             binaryExpr.right = literalB;
-            binaryExpr.op = "+";
+            binaryExpr.@operator = OperatorKind.Addition;
 
             returnSt.expr = binaryExpr;
             method.body = returnSt;

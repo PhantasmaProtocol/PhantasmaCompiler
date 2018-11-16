@@ -12,6 +12,29 @@ namespace Phantasma.CodeGen.Core.Nodes
         Public
     }
 
+    public enum OperatorKind
+    {
+        Unknown,
+        Addition,
+        Subtraction,
+        Multiplication,
+        Division,
+        Modulus,
+        Increment,
+        Decrement,
+        Equals,
+        Different,
+        Great,
+        Less,
+        GreatOrEqual,
+        LessOrEqual,
+        Not,
+        And,
+        Or,
+        Xor,
+    }
+
+
     public abstract class CompilerNode
     {
         public readonly CompilerNode Owner;

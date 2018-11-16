@@ -6,7 +6,7 @@ namespace Phantasma.CodeGen.Core.Nodes
 {
     public class BinaryExpressionNode : ExpressionNode
     {
-        public string op;
+        public OperatorKind @operator;
         public ExpressionNode left;
         public ExpressionNode right;
 
@@ -17,7 +17,7 @@ namespace Phantasma.CodeGen.Core.Nodes
 
         public override string ToString()
         {
-            return base.ToString() + "=>" + this.op;
+            return base.ToString() + "=>" + this.@operator;
         }
 
         public override IEnumerable<CompilerNode> Nodes
@@ -36,15 +36,15 @@ namespace Phantasma.CodeGen.Core.Nodes
             var right = this.right.Emit(compiler);
 
             Instruction.Opcode opcode;
-            switch (this.op)
+            switch (this.@operator)
             {
-                case "+": opcode = Instruction.Opcode.Add; break;
-                case "-": opcode = Instruction.Opcode.Sub; break;
-                case "*": opcode = Instruction.Opcode.Mul; break;
-                case "/": opcode = Instruction.Opcode.Div; break;
-                case "%": opcode = Instruction.Opcode.Mod; break;
-                case "==": opcode = Instruction.Opcode.Equals; break;
-                default: throw new ArgumentException("Invalid opcode: " + op);
+                case OperatorKind.Addition: opcode = Instruction.Opcode.Add; break;
+                case OperatorKind.Subtraction: opcode = Instruction.Opcode.Sub; break;
+                case OperatorKind.Multiplication: opcode = Instruction.Opcode.Mul; break;
+                case OperatorKind.Division: opcode = Instruction.Opcode.Div; break;
+                case OperatorKind.Modulus: opcode = Instruction.Opcode.Mod; break;
+                case OperatorKind.Equals: opcode = Instruction.Opcode.Equals; break;
+                default: throw new ArgumentException("Invalid opcode: " + @operator);
             }
 
             var temp = new List<Instruction>();
@@ -70,7 +70,7 @@ namespace Phantasma.CodeGen.Core.Nodes
 
         protected override bool ValidateSemantics()
         {
-            if (string.IsNullOrEmpty(this.op))
+            if (@operator == OperatorKind.Unknown)
             {
                 return false;
             }
