@@ -13,7 +13,7 @@ namespace Phantasma.CodeGen.Core.Nodes
 
         public TypeNode returnType;
 
-        public List<ArgumentNode> arguments = new List<ArgumentNode>();
+        public List<ParameterNode> parameters = new List<ParameterNode>();
 
         public StatementNode body;
 
@@ -24,7 +24,7 @@ namespace Phantasma.CodeGen.Core.Nodes
 
         public override DeclarationNode ResolveIdentifier(string identifier)
         {
-            foreach (var arg in arguments)
+            foreach (var arg in parameters)
             {
                 if (arg.decl.identifier == identifier)
                 {
@@ -39,7 +39,7 @@ namespace Phantasma.CodeGen.Core.Nodes
         {
             get
             {
-                foreach (var arg in arguments)
+                foreach (var arg in parameters)
                 {
                     yield return arg;
                 }
@@ -58,7 +58,9 @@ namespace Phantasma.CodeGen.Core.Nodes
         {
             var result = new List<Instruction>();
 
-            foreach (var arg in arguments)
+            result.Add(new Instruction() { source = this, target = this.name, op = Instruction.Opcode.Label });
+
+            foreach (var arg in parameters)
             {
                 var reg = compiler.AllocRegister();
                 compiler.varMap[arg.decl.identifier] = reg;
@@ -68,6 +70,11 @@ namespace Phantasma.CodeGen.Core.Nodes
             var temp = body.Emit(compiler);
             result.AddRange(temp);
             return result;
+        }
+
+        protected override bool ValidateSemantics()
+        {
+            return !string.IsNullOrEmpty(name);
         }
     }
 }

@@ -5,14 +5,17 @@ namespace HelloWorld
 {
     public class MyContract : Contract
     {
-        public static int Main(string operation, int a, int b)
+        public static int Add(string operation, int a, int b)
         {
-            switch (operation) {
-                case "add": return a + b;
-                case "sub": return a - b;
-                case "mul": return a * b;
-                default: return -1;
-            }
+			return a + b;
+		}
+		
+        public static int Subtract(string operation, int a, int b){
+            return a - b;
+		}
+		
+		public static int Add(string operation, int a, int b) {
+                return a * b;
         }
     }
 }

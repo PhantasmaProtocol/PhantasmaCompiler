@@ -5,6 +5,8 @@ namespace Phantasma.CodeGen.Core.Nodes
 {
     public class CallNode: StatementNode
     {
+        public MethodNode method;
+
         public CallNode(CompilerNode owner) : base(owner)
         {
         }
@@ -13,7 +15,9 @@ namespace Phantasma.CodeGen.Core.Nodes
 
         public override List<Instruction> Emit(Compiler compiler)
         {
-            throw new System.NotImplementedException();
+            var temp = new List<Instruction>();
+            temp.Add(new Instruction() { source = this, target = method.name, op = Instruction.Opcode.Call });
+            return temp;
         }
     }
 }

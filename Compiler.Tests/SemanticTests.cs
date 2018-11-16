@@ -52,6 +52,7 @@ namespace Phantasma.Tests
             var module = new ModuleNode();
             var @class = new ClassNode(module);
             var method = new MethodNode(@class);
+            method.name = "test";
             method.returnType = new TypeNode(method, TypeKind.String);
 
             var returnSt = new ReturnNode(method);
@@ -63,6 +64,10 @@ namespace Phantasma.Tests
 
             Assert.IsTrue(module.Validate());
 
+            var callSt = new CallNode(module);
+            callSt.method = method;
+            module.body = callSt;
+
             var result = CompileAndExecute(module) as string;
             Assert.IsTrue(result == "hello");
         }
@@ -73,6 +78,7 @@ namespace Phantasma.Tests
             var module = new ModuleNode();
             var @class = new ClassNode(module);
             var method = new MethodNode(@class);
+            method.name = "test";
             method.returnType = new TypeNode(method, TypeKind.String);
 
             var returnSt = new ReturnNode(method);
@@ -91,6 +97,7 @@ namespace Phantasma.Tests
             var module = new ModuleNode();
             var @class = new ClassNode(module);
             var method = new MethodNode(@class);
+            method.name = "test";
             method.returnType = new TypeNode(method, TypeKind.String);
 
             var returnSt = new ReturnNode(method);
@@ -114,6 +121,10 @@ namespace Phantasma.Tests
 
             Assert.IsFalse(module.Validate());
 
+            var callSt = new CallNode(module);
+            callSt.method = method;
+            module.body = callSt;
+
             var result = CompileAndExecute(module) as BigInteger;
             Assert.IsTrue(result == 4);
         }
@@ -124,6 +135,7 @@ namespace Phantasma.Tests
             var module = new ModuleNode();
             var @class = new ClassNode(module);
             var method = new MethodNode(@class);
+            method.name = "test";
             method.returnType = new TypeNode(method, TypeKind.String);
 
             var returnSt = new ReturnNode(method);

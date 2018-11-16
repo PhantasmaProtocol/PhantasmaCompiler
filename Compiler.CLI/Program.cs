@@ -80,7 +80,7 @@ namespace Phantasma.CodeGen
             var vm = new TestVM(generator.Script);
             vm.Stack.Push(new VMObject().SetValue(2));
             vm.Stack.Push(new VMObject().SetValue(3));
-            vm.Stack.Push(new VMObject().SetValue("add"));
+            vm.Stack.Push(new VMObject().SetValue("Add"));
             vm.Execute();
 
             var result = vm.Stack.Pop();

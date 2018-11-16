@@ -15,7 +15,9 @@ namespace Phantasma.CodeGen.Core.Nodes
         public override List<Instruction> Emit(Compiler compiler)
         {
             var temp = expr.Emit(compiler);
-            temp.Add(new Instruction() { source = this, target = "ret", a = temp.Last(), op = Instruction.Opcode.Return });
+            var last = temp.Last();
+            temp.Add(new Instruction() { source = this, target = last.target, a = last, op = Instruction.Opcode.Push });
+            temp.Add(new Instruction() { source = this, target = null, a = null, op = Instruction.Opcode.Return });
             return temp;
         }
 

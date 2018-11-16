@@ -85,12 +85,12 @@ namespace Phantasma.CodeGen.Core
             return register;
         }
 
-        private void InsertJump(Instruction i, VM.Opcode Opcode)
+        private void InsertJump(Instruction i, VM.Opcode opcode)
         {
             byte reg;
 
             // for conditional jumps, fetch the appropriate register for the conditional value
-            if (Opcode != VM.Opcode.JMP)
+            if (opcode != VM.Opcode.JMP)
             {
                 reg = FetchRegister(i.a.target);
             }
@@ -99,11 +99,7 @@ namespace Phantasma.CodeGen.Core
                 reg = 0;
             }
 
-            var label = i.b.ToString();
-
-            label = label.Replace("@", ""); // TODO fix this hack
-
-            _output.EmitJump(Opcode, label, reg);
+            _output.EmitJump(opcode, i.b.target, reg);
         }
 
         private void InsertOp(Instruction i, VM.Opcode Opcode)
@@ -132,6 +128,13 @@ namespace Phantasma.CodeGen.Core
                 case Instruction.Opcode.Label:
                     {
                         _output.EmitLabel(i.target);
+                        break;
+                    }
+
+                case Instruction.Opcode.Push:
+                    {
+                        var reg = FetchRegister(i.target);
+                        _output.EmitPush(reg);
                         break;
                     }
 
@@ -216,8 +219,11 @@ namespace Phantasma.CodeGen.Core
                 case Instruction.Opcode.JumpIfFalse: InsertJump(i, VM.Opcode.JMPNOT); break;
                 case Instruction.Opcode.JumpIfTrue: InsertJump(i, VM.Opcode.JMPIF); break;
 
+                case Instruction.Opcode.Call:
+                    _output.EmitCall(i.target, 8); // TODO remove hardcoded register count
+                    break;
+
                 case Instruction.Opcode.Return:
-                    _output.EmitPush(FetchRegister(i.a.target));
                     _output.Emit(VM.Opcode.RET);
                     break;
 
@@ -234,7 +240,6 @@ namespace Phantasma.CodeGen.Core
                         var dst = FetchRegister(i.target);
                         _output.Emit(VM.Opcode.NOT, new byte[] { src, dst }); break;
                     }
-
 
                 default: throw new Exception("Unsupported Opcode: "+ i.op);
             }

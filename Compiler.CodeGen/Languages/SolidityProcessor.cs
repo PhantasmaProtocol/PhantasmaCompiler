@@ -248,7 +248,7 @@ namespace Phantasma.CodeGen.Languages
                     ExpectDelimiter(tokens, ref index, ",");
                 }
 
-                var arg = new ArgumentNode(method);
+                var arg = new ParameterNode(method);
 
                 var decl = new DeclarationNode(arg);
                 var typeText = ExpectIdentifier(tokens, ref index, true);

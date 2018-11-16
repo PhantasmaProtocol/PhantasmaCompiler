@@ -175,7 +175,7 @@ namespace Phantasma.CodeGen.Languages
                 }
 
                 ExpectDelimiter(tokens, ref index, "(");
-                ParseMethodArguments(tokens, ref index, method);
+                ParseMethodParameters(tokens, ref index, method);
                 ExpectDelimiter(tokens, ref index, ")");
 
                 if (method.isAbstract)
@@ -192,7 +192,7 @@ namespace Phantasma.CodeGen.Languages
 
         }
 
-        private void ParseMethodArguments(List<Token> tokens, ref int index, MethodNode method)
+        private void ParseMethodParameters(List<Token> tokens, ref int index, MethodNode method)
         {
             int count = 0;
             do
@@ -207,7 +207,7 @@ namespace Phantasma.CodeGen.Languages
                     ExpectDelimiter(tokens, ref index, ",");
                 }
 
-                var arg = new ArgumentNode(method);
+                var arg = new ParameterNode(method);
 
                 var decl = new DeclarationNode(arg);
                 var typeText = ExpectIdentifier(tokens, ref index, true);

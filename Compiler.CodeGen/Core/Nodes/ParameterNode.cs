@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace Phantasma.CodeGen.Core.Nodes
 {
-    public class ArgumentNode : CompilerNode
+    public class ParameterNode : CompilerNode
     {
         public DeclarationNode decl;
 
-        public ArgumentNode(MethodNode owner) : base(owner)
+        public ParameterNode(MethodNode owner) : base(owner)
         {
-            owner.arguments.Add(this);
+            owner.parameters.Add(this);
         }
 
         public override string ToString()

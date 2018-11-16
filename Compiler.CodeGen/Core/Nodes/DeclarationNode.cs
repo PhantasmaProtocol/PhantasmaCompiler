@@ -16,9 +16,9 @@ namespace Phantasma.CodeGen.Core.Nodes
                 ((BlockNode)owner).declarations.Add(this);
             }
             else
-            if (owner is ArgumentNode)
+            if (owner is ParameterNode)
             {
-                ((ArgumentNode)owner).decl = this;
+                ((ParameterNode)owner).decl = this;
             }
             else
             {

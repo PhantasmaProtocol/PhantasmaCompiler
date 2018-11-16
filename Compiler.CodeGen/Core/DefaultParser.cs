@@ -308,6 +308,11 @@ namespace Phantasma.CodeGen.Core
             var opDecl = new DeclarationNode(result);
             opDecl.identifier = "operation";
             opDecl.type = new TypeNode(opDecl, TypeKind.String);
+            result.declarations.Add(opDecl);
+
+            var assSt = new StackAssignmentNode(result);
+            assSt.declaration = opDecl;
+            result.statements.Add(assSt);
 
             foreach (var method in methods)
             {
@@ -329,10 +334,13 @@ namespace Phantasma.CodeGen.Core
                 cmpExpr.right = rightExpr;
                 cmpExpr.@operator = OperatorKind.Equals;
 
-                var jmpSt = new CallNode(ifExpr);
+                var callSt = new CallNode(ifExpr);
+                callSt.method = method;
 
                 ifExpr.expr = cmpExpr;
-                ifExpr.trueBranch = jmpSt;
+                ifExpr.trueBranch = callSt;
+
+                result.statements.Add(ifExpr);
             }
 
             result.statements.Add(new ExitNode(result)); 

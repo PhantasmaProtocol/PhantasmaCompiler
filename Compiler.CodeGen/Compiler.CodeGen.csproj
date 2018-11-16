@@ -50,7 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Compiler.cs" />
-    <Compile Include="Core\Nodes\ArgumentNode.cs" />
+    <Compile Include="Core\Instruction.cs" />
+    <Compile Include="Core\Nodes\StackAssignmentNode.cs" />
+    <Compile Include="Core\Nodes\ParameterNode.cs" />
     <Compile Include="Core\Nodes\AssignmentNode.cs" />
     <Compile Include="Core\Nodes\BinaryExpressionNode.cs" />
     <Compile Include="Core\Nodes\BlockNode.cs" />
