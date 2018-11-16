@@ -18,6 +18,7 @@ namespace Phantasma.CodeGen.Core
             Mod,
             Shr,
             Shl,
+            Negate,
             Equals,
             LessThan,
             GreaterThan,
@@ -127,6 +128,11 @@ namespace Phantasma.CodeGen.Core
                 else
                 if (symbol != null)
                 {
+                    if (symbol == "-")
+                    {
+                        op = Opcode.Negate;
+                    }
+
                     s += $" := {symbol}{a.target}";
                 }
                 else

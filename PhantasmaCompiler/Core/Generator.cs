@@ -100,7 +100,10 @@ namespace Phantasma.CodeGen
             }
 
             var label = i.b.ToString();
-            _output.EmitJump(Opcode, label);
+
+            label = label.Replace("@", ""); // TODO fix this hack
+
+            _output.EmitJump(Opcode, label, reg);
         }
 
         private void InsertOp(Instruction i, VM.Opcode Opcode)
@@ -197,15 +200,25 @@ namespace Phantasma.CodeGen
                 case Instruction.Opcode.JumpIfFalse: InsertJump(i, VM.Opcode.JMPNOT); break;
                 case Instruction.Opcode.JumpIfTrue: InsertJump(i, VM.Opcode.JMPIF); break;
 
-                case Instruction.Opcode.Return: _output.Emit(VM.Opcode.RET); break;  // not correct?
+                case Instruction.Opcode.Return:
+                    _output.EmitPush(FetchRegister(i.a.target));
+                    _output.Emit(VM.Opcode.RET);
+                    break;
+
+                case Instruction.Opcode.Negate:
+                    {
+                        var src = FetchRegister(i.a.target);
+                        var dst = FetchRegister(i.target);
+                        _output.Emit(VM.Opcode.NEGATE, new byte[] { src, dst }); break;
+                    }
 
                 case Instruction.Opcode.Not:
                     {
                         var src = FetchRegister(i.a.target);
                         var dst = FetchRegister(i.target);
-                        _output.Emit(VM.Opcode.NOT, new byte[] { src, dst} ); break;
+                        _output.Emit(VM.Opcode.NOT, new byte[] { src, dst }); break;
                     }
-                    
+
 
                 default: throw new Exception("Unsupported Opcode: "+ i.op);
             }

@@ -72,10 +72,13 @@ namespace Phantasma.CodeGen
             }
 
             var vm = new TestVM(generator.Script);
-            vm.stack.Push(new VMObject().SetValue(2));
-            vm.stack.Push(new VMObject().SetValue(3));
-            vm.stack.Push(new VMObject().SetValue("add"));
+            vm.Stack.Push(new VMObject().SetValue(2));
+            vm.Stack.Push(new VMObject().SetValue(3));
+            vm.Stack.Push(new VMObject().SetValue("add"));
             vm.Execute();
+
+            var result = vm.Stack.Pop();
+            Console.WriteLine("RESULT = "+result.ToObject().ToString());
 
             Console.WriteLine("****END***");
             Console.ReadKey();
