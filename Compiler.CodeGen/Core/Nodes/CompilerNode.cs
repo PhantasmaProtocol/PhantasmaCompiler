@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Phantasma.CodeGen.Core.Nodes
 {
@@ -23,10 +25,16 @@ namespace Phantasma.CodeGen.Core.Nodes
             this.Owner = owner;
         }
 
-        public virtual void Visit(Action<CompilerNode, int> visitor, int level = 0)
+        public void Visit(Action<CompilerNode, int> visitor, int level = 0)
         {
             visitor(this, level);
+            foreach (var node in this.Nodes)
+            {
+                node.Visit(visitor, level + 1);
+            }
         }
+
+        public abstract IEnumerable<CompilerNode> Nodes { get; }
 
         public override string ToString()
         {
@@ -43,6 +51,29 @@ namespace Phantasma.CodeGen.Core.Nodes
             {
                 throw new Exception("Identifier could not be resolved: " + identifier);
             }
+        }
+
+        protected virtual bool ValidateSemantics()
+        {
+            return true;
+        }
+
+        public bool Validate()
+        {
+            if (!ValidateSemantics())
+            {
+                return false;
+            }
+
+            foreach (var node in this.Nodes)
+            {
+                if (!node.Validate())
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

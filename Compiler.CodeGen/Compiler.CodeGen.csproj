@@ -71,6 +71,7 @@
     <Compile Include="Core\Nodes\ReturnNode.cs" />
     <Compile Include="Core\Nodes\StatementNode.cs" />
     <Compile Include="Core\Nodes\SwitchNode.cs" />
+    <Compile Include="Core\Nodes\TypeNode.cs" />
     <Compile Include="Core\Nodes\UnaryExpressionNode.cs" />
     <Compile Include="Core\Nodes\VariableExpressionNode.cs" />
     <Compile Include="Core\Nodes\WhileNode.cs" />

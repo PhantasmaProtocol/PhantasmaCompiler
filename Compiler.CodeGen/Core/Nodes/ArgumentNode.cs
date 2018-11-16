@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Phantasma.CodeGen.Core.Nodes
 {
@@ -16,10 +17,13 @@ namespace Phantasma.CodeGen.Core.Nodes
             return base.ToString() + "=>" + this.decl.ToString();
         }
 
-        public override void Visit(Action<CompilerNode, int> visitor, int level = 0)
+        public override IEnumerable<CompilerNode> Nodes
         {
-            base.Visit(visitor, level);
-            decl.Visit(visitor, level + 1);
+            get
+            {
+                yield return decl;
+                yield break;
+            }
         }
     }
 }

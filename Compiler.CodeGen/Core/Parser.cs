@@ -17,6 +17,7 @@ namespace Phantasma.CodeGen.Core
             ExpectedLiteral,
             ExpectedOperator,
             ExpectedKeyword,
+            ExpectedType,
             DuplicatedLabel
         }
 

@@ -1,4 +1,5 @@
 ﻿using Phantasma.CodeGen.Core;
+using Phantasma.CodeGen.Core.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,16 +29,17 @@ namespace Phantasma.CodeGen.Languages
 
     public class CSharpParser: DefaultParser
     {
-        protected HashSet<string> _types = new HashSet<string>(new string[] { "int", "uint", "bool", "string" });
-
-        protected override bool IsValidType(string token)
+        protected override TypeNode GetTypeFromToken(CompilerNode owner, string token)
         {
-            if (token == "var")
+            switch (token)
             {
-                return true;
+                case "bool": return new TypeNode(owner, TypeKind.Boolean);
+                case "string": return new TypeNode(owner, TypeKind.String);
+                case "int": return new TypeNode(owner, TypeKind.Integer);
+                case "uint": return new TypeNode(owner, TypeKind.Integer);
+                case "var": return new TypeNode(owner, TypeKind.Integer); // TODO fixme
+                default: return null;
             }
-
-            return _types.Contains(token);
         }
 
         public override ModuleNode Execute(List<Token> tokens)
@@ -133,7 +135,10 @@ namespace Phantasma.CodeGen.Languages
         {
             do
             {
-                if (index >= tokens.Count) throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
+                if (index >= tokens.Count)
+                {
+                    throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
+                }
 
                 var visibility = ParseVisibility(tokens, ref index);
 
@@ -141,7 +146,14 @@ namespace Phantasma.CodeGen.Languages
 
                 var method = new MethodNode(classNode);
 
-                method.returnType = ExpectIdentifier(tokens, ref index, true);
+                var typeText = ExpectIdentifier(tokens, ref index, true);
+                method.returnType = GetTypeFromToken(classNode, typeText);
+
+                if (method.returnType == null)
+                {
+                    throw new ParserException(tokens.Last(), ParserException.Kind.ExpectedType);
+                }
+
                 method.visibility = visibility;
 
                 method.name = ExpectIdentifier(tokens, ref index, false);
@@ -175,7 +187,10 @@ namespace Phantasma.CodeGen.Languages
             int count = 0;
             do
             {
-                if (index >= tokens.Count) throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
+                if (index >= tokens.Count)
+                {
+                    throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
+                }
 
                 if (count > 0)
                 {
@@ -185,7 +200,14 @@ namespace Phantasma.CodeGen.Languages
                 var arg = new ArgumentNode(method);
 
                 var decl = new DeclarationNode(arg);
-                decl.typeName = ExpectIdentifier(tokens, ref index, true);
+                var typeText = ExpectIdentifier(tokens, ref index, true);
+
+                decl.type = GetTypeFromToken(method, typeText);
+                if (decl.type == null)
+                {
+                    throw new ParserException(tokens.Last(), ParserException.Kind.ExpectedType);
+                }
+
                 decl.identifier = ExpectIdentifier(tokens, ref index, false);
 
                 count++;

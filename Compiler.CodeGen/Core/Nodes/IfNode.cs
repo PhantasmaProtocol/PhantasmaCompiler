@@ -14,12 +14,15 @@ namespace Phantasma.CodeGen.Core.Nodes
         {
         }
 
-        public override void Visit(Action<CompilerNode, int> visitor, int level = 0)
+        public override IEnumerable<CompilerNode> Nodes
         {
-            base.Visit(visitor, level);
-            expr.Visit(visitor, level + 1);
-            trueBranch.Visit(visitor, level + 1);
-            if (falseBranch != null) falseBranch.Visit(visitor, level + 1);
+            get
+            {
+                yield return expr;
+                yield return trueBranch;
+                if (falseBranch != null) yield return falseBranch;
+                yield break;
+            }
         }
 
         public override List<Instruction> Emit(Compiler compiler)

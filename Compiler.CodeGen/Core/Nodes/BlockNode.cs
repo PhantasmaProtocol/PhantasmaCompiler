@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Phantasma.CodeGen.Core.Nodes
 {
@@ -37,13 +38,6 @@ namespace Phantasma.CodeGen.Core.Nodes
             return list;
         }
 
-        public override void Visit(Action<CompilerNode, int> visitor, int level = 0)
-        {
-            base.Visit(visitor, level);
-
-            foreach (var decl in declarations) decl.Visit(visitor, level + 1);
-            foreach (var st in statements) st.Visit(visitor, level + 1);
-        }
-
+        public override IEnumerable<CompilerNode> Nodes => declarations.Concat<CompilerNode>(statements);
     }
 }

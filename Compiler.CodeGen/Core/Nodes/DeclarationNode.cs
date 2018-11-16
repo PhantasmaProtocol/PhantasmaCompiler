@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Phantasma.CodeGen.Core.Nodes
 {
     public class DeclarationNode : CompilerNode
     {
         public string identifier;
-        public string typeName;
+        public TypeNode type;
 
         public DeclarationNode(CompilerNode owner) : base(owner)
         {
@@ -24,9 +26,11 @@ namespace Phantasma.CodeGen.Core.Nodes
             }
         }
 
+        public override IEnumerable<CompilerNode> Nodes => Enumerable.Empty<CompilerNode>();
+
         public override string ToString()
         {
-            return base.ToString() + "=>" + this.identifier+"/"+this.typeName;
+            return base.ToString() + "=>" + this.identifier+"/"+this.type.Kind;
         }
 
     }

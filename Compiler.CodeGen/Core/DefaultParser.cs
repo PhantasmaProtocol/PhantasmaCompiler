@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Phantasma.CodeGen.Core.Nodes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +7,7 @@ namespace Phantasma.CodeGen.Core
 {
     public abstract class DefaultParser: Parser
     {
-        protected abstract bool IsValidType(string token);
+        protected abstract TypeNode GetTypeFromToken(CompilerNode owner, string token);
 
         protected virtual int GetOperatorPrecedence(string op)
         {
@@ -57,10 +58,11 @@ namespace Phantasma.CodeGen.Core
 
                 StatementNode statement = null;
 
-                if (IsValidType(token.text))
+                var type = GetTypeFromToken(owner, token.text);
+                if (type != null)
                 {
                     var decl = new DeclarationNode(block);
-                    decl.typeName = token.text;
+                    decl.type = type;
                     index++;
                     decl.identifier = ExpectIdentifier(tokens, ref index, false);
 

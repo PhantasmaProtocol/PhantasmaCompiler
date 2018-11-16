@@ -9,5 +9,7 @@ namespace Phantasma.CodeGen.Core.Nodes
         }
 
         public abstract List<Instruction> Emit(Compiler compiler);
+
+        public abstract TypeKind GetKind();
     }
 }

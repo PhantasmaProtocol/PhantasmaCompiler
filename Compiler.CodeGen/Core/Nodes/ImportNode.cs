@@ -1,4 +1,7 @@
-﻿namespace Phantasma.CodeGen.Core.Nodes
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Phantasma.CodeGen.Core.Nodes
 {
     public class ImportNode : CompilerNode
     {
@@ -8,6 +11,8 @@
         {
             owner.imports.Add(this);
         }
+
+        public override IEnumerable<CompilerNode> Nodes => Enumerable.Empty<CompilerNode>();
 
         public override string ToString()
         {

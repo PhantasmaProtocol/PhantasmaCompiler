@@ -18,10 +18,13 @@ namespace Phantasma.CodeGen.Core.Nodes
             return base.ToString() + "=>" + this.op;
         }
 
-        public override void Visit(Action<CompilerNode, int> visitor, int level = 0)
+        public override IEnumerable<CompilerNode> Nodes
         {
-            base.Visit(visitor, level);
-            term.Visit(visitor, level + 1);
+            get
+            {
+                yield return term;
+                yield break;
+            }
         }
 
         public override List<Instruction> Emit(Compiler compiler)
@@ -40,6 +43,16 @@ namespace Phantasma.CodeGen.Core.Nodes
             var temp = this.term.Emit(compiler);
             temp.Add(new Instruction() { source = this, target = compiler.AllocRegister(), a = temp.Last(), op = opcode });
             return temp;
+        }
+
+        public override TypeKind GetKind()
+        {
+            if (op == "!")
+            {
+                return TypeKind.Boolean;
+            }
+
+            return TypeKind.Integer;
         }
     }
 }

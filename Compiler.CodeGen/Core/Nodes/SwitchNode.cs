@@ -14,20 +14,24 @@ namespace Phantasma.CodeGen.Core.Nodes
         {
         }
 
-        public override void Visit(Action<CompilerNode, int> visitor, int level = 0)
+        public override IEnumerable<CompilerNode> Nodes
         {
-            base.Visit(visitor, level);
-
-            expr.Visit(visitor, level + 1);
-
-            foreach (var entry in cases)
+            get
             {
-                entry.Key.Visit(visitor, level + 2);
-                entry.Value.Visit(visitor, level + 2);
-            }
-            if (defaultBranch != null)
-            {
-                defaultBranch.Visit(visitor, level + 1);
+                yield return expr;
+
+                foreach (var entry in cases)
+                {
+                    yield return entry.Key;
+                    yield return entry.Value;
+                }
+
+                if (defaultBranch != null)
+                {
+                    yield return defaultBranch;
+                }
+
+                yield break;
             }
         }
 

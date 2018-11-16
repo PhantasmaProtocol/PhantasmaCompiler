@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Phantasma.CodeGen.Core;
+using Phantasma.CodeGen.Core.Nodes;
 
 namespace Phantasma.CodeGen.Languages
 {
@@ -28,13 +29,11 @@ namespace Phantasma.CodeGen.Languages
 
     public class SolidityParser : DefaultParser
     {
-        protected HashSet<string> _types = new HashSet<string>(new string[] { "bool", "string", "address" });
-
-        private bool IsValidNumericSize(string size)
+        private int GetNumericSize(string size)
         {
             if (string.IsNullOrEmpty(size))
             {
-                return true;
+                return 256;
             }
 
             int val;
@@ -43,23 +42,42 @@ namespace Phantasma.CodeGen.Languages
             {
                 if (val>=8 && val <= 256)
                 {
-                    return (val % 8) == 0; 
+                    if ((val % 8) == 0)
+                    {
+                        return val;
+                    } 
                 }
             }
 
-            return false;
+            return -1;
         }
 
-        protected override bool IsValidType(string token)
+        protected override TypeNode GetTypeFromToken(CompilerNode owner, string token)
         {
             if (token.StartsWith("int"))
             {
-                return IsValidNumericSize(token.Substring(3));
+                int size = GetNumericSize(token.Substring(3));
+                if (size > 0)
+                {
+                    return new TypeNode(owner, TypeKind.Integer);
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             if (token.StartsWith("uint"))
             {
-                return IsValidNumericSize(token.Substring(4));
+                int size = GetNumericSize(token.Substring(4));
+                if (size > 0)
+                {
+                    return new TypeNode(owner, TypeKind.Integer);
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             if (token.StartsWith("byte"))
@@ -67,17 +85,28 @@ namespace Phantasma.CodeGen.Languages
                 var size = token.Substring(4);
                 if (string.IsNullOrEmpty(size) || size=="s")
                 {
-                    return true;
+                    return new TypeNode(owner, TypeKind.ByteArray);
                 }
 
                 int val;
                 if (int.TryParse(size, out val))
                 {
-                    return val >= 1 && val <= 32;
+                    if (val >= 1 && val <= 32)
+                    {
+                        return new TypeNode(owner, TypeKind.ByteArray);
+                    }
                 }
+
+                return null;
             }
 
-            return _types.Contains(token);
+            switch (token)
+            {
+                case "bool": return new TypeNode(owner, TypeKind.Boolean);
+                case "string": return new TypeNode(owner, TypeKind.String);
+                case "address": return new TypeNode(owner, TypeKind.Struct); // TODO fixme
+                default: return null;
+            }
         }
 
         public override ModuleNode Execute(List<Token> tokens)
@@ -163,12 +192,19 @@ namespace Phantasma.CodeGen.Languages
                 index++;
 
                 ExpectDelimiter(tokens, ref index, "(");
-                method.returnType = ExpectIdentifier(tokens, ref index, true);
+                var typeText = ExpectIdentifier(tokens, ref index, true);
+                method.returnType = GetTypeFromToken(method, typeText);
+
+                if (method.returnType == null)
+                {
+                    throw new ParserException(tokens.Last(), ParserException.Kind.ExpectedType);
+                }
+
                 ExpectDelimiter(tokens, ref index, ")");
             }
             else
             {
-                method.returnType = "void";
+                method.returnType = new TypeNode(method, TypeKind.Void);
             }
 
 
@@ -194,7 +230,10 @@ namespace Phantasma.CodeGen.Languages
             int count = 0;
             do
             {
-                if (index >= tokens.Count) throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
+                if (index >= tokens.Count)
+                {
+                    throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
+                }
 
                 if (count > 0)
                 {
@@ -204,12 +243,18 @@ namespace Phantasma.CodeGen.Languages
                 var arg = new ArgumentNode(method);
 
                 var decl = new DeclarationNode(arg);
-                decl.typeName = ExpectIdentifier(tokens, ref index, true);
+                var typeText = ExpectIdentifier(tokens, ref index, true);
+
+                decl.type = GetTypeFromToken(method, typeText);
+                if (decl.type == null)
+                {
+                    throw new ParserException(tokens.Last(), ParserException.Kind.ExpectedType);
+                }
+
                 decl.identifier = ExpectIdentifier(tokens, ref index, false);
 
                 count++;
             } while (tokens[index].text != ")");
         }
-
     }
 }

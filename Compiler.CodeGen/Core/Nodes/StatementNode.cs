@@ -9,5 +9,21 @@ namespace Phantasma.CodeGen.Core.Nodes
         }
 
         public abstract List<Instruction> Emit(Compiler compiler);
+
+        public MethodNode FindParentMethod()
+        {
+            var node = Owner;
+            while (node != null)
+            {
+                if (node is MethodNode)
+                {
+                    return (MethodNode)node;
+                }
+
+                node = node.Owner;
+            }
+
+            return null;
+        }
     }
 }

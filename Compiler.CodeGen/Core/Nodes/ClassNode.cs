@@ -18,12 +18,7 @@ namespace Phantasma.CodeGen.Core.Nodes
             owner.classes.Add(this);
         }
 
-        public override void Visit(Action<CompilerNode, int> visitor, int level = 0)
-        {
-            base.Visit(visitor, level);
-
-            foreach (var method in methods) method.Visit(visitor, level + 1);
-        }
+        public override IEnumerable<CompilerNode> Nodes => methods;
 
         public override string ToString()
         {

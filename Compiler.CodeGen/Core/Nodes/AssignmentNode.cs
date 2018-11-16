@@ -13,10 +13,13 @@ namespace Phantasma.CodeGen.Core.Nodes
         {
         }
 
-        public override void Visit(Action<CompilerNode, int> visitor, int level = 0)
+        public override IEnumerable<CompilerNode> Nodes
         {
-            base.Visit(visitor, level);
-            expr.Visit(visitor, level + 1);
+            get
+            {
+                yield return expr;
+                yield break;
+            }
         }
 
         public override string ToString()

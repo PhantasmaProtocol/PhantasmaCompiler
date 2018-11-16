@@ -11,7 +11,7 @@ namespace Phantasma.CodeGen.Core.Nodes
         public bool isVirtual;
         public Visibility visibility;
 
-        public string returnType;
+        public TypeNode returnType;
 
         public List<ArgumentNode> arguments = new List<ArgumentNode>();
 
@@ -35,12 +35,18 @@ namespace Phantasma.CodeGen.Core.Nodes
             return base.ResolveIdentifier(identifier);
         }
 
-        public override void Visit(Action<CompilerNode, int> visitor, int level = 0)
+        public override IEnumerable<CompilerNode> Nodes
         {
-            base.Visit(visitor, level);
-
-            foreach (var arg in arguments) arg.Visit(visitor, level + 1);
-            body.Visit(visitor, level + 1);
+            get
+            {
+                foreach (var arg in arguments)
+                {
+                    yield return arg;
+                }
+                yield return returnType;
+                yield return body;
+                yield break;
+            }
         }
 
         public override string ToString()
