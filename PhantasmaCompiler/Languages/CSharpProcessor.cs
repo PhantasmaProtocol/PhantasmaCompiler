@@ -1,5 +1,4 @@
 ﻿using Phantasma.CodeGen.Core;
-using Phantasma.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +14,7 @@ namespace Phantasma.CodeGen.Languages
 
         public override Lexer Lexer => _lexer;
         public override Parser Parser => _parser;
+        public override string Description => "C#";
 
         private Lexer _lexer;
         private Parser _parser;
@@ -28,156 +28,6 @@ namespace Phantasma.CodeGen.Languages
 
     public class CSharpParser: Parser 
     {
-        private HashSet<string> ParseOptionals(List<Token> tokens, ref int index, HashSet<string> keywords)
-        {
-            var result = new HashSet<string>();
-            do
-            {
-                if (index >= tokens.Count) throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
-
-                var token = tokens[index];
-
-                if (keywords.Contains(token.text))
-                {
-                    result.Add(token.text);
-                    index++;
-                }
-                else
-                {
-                    return result;
-                }
-            } while (true);
-        }
-
-        private bool ExpectOptional(List<Token> tokens, ref int index, string value)
-        {
-            if (index >= tokens.Count) throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
-
-            var token = tokens[index];
-            if (token.text == value)
-            {
-                index++;
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool ExpectOptional(List<Token> tokens, ref int index, Token.Kind kind)
-        {
-            if (index >= tokens.Count) throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
-
-            var token = tokens[index];
-            if (token.kind == kind)
-            {
-                index++;
-                return true;
-            }
-
-            return false;
-        }
-
-        private void ExpectDelimiter(List<Token> tokens, ref int index, string value)
-        {
-            if (index >= tokens.Count) throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
-
-            var token = tokens[index];
-            if (token.kind != Token.Kind.Delimiter || token.text != value)
-            {
-                throw new ParserException(token, ParserException.Kind.ExpectedToken);
-            }
-
-            index++;
-        }
-
-        private void ExpectKeyword(List<Token> tokens, ref int index, string value)
-        {
-            if (index >= tokens.Count) throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
-
-            var token = tokens[index];
-            if (token.kind != Token.Kind.Keyword || token.text != value)
-            {
-                throw new ParserException(token, ParserException.Kind.ExpectedKeyword);
-            }
-
-            index++;
-        }
-
-        private string ExpectValue(List<Token> tokens, ref int index, Token.Kind kind, ParserException.Kind exception)
-        {
-            if (index >= tokens.Count) throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
-
-            var token = tokens[index];
-            if (token.kind != kind)
-            {
-                throw new ParserException(token, exception);
-            }
-
-            index++;
-            return token.text;
-        }
-
-        private string ExpectIdentifier(List<Token> tokens, ref int index, bool allowPath)
-        {
-            var result = ExpectValue(tokens, ref index, Token.Kind.Identifier, ParserException.Kind.ExpectedIdentifier);
-
-            if (!allowPath && result.Contains("."))
-            {
-                throw new ParserException(tokens[index - 1], ParserException.Kind.ExpectedIdentifier);
-            }
-
-            return result;
-        }
-
-        private object ExpectLiteral(List<Token> tokens, ref int index, out LiteralKind kind)
-        {
-            if (index >= tokens.Count) throw new ParserException(tokens.Last(), ParserException.Kind.EndOfStream);
-
-            var token = tokens[index];
-            index++;
-
-            switch (token.kind)
-            {
-                case Token.Kind.Integer:
-                    {
-                        kind = LiteralKind.Integer;
-                        var val = BigInteger.Parse(token.text);
-                        return val;
-                    }
-
-                case Token.Kind.Float:
-                    {
-                        kind = LiteralKind.Float;
-                        var val = decimal.Parse(token.text);
-                        return val;
-                    }
-
-                case Token.Kind.Boolean:
-                    {
-                        kind = LiteralKind.Integer;
-                        var val = token.text.ToLower() == "true";
-                        return val;
-                    }
-
-                case Token.Kind.String:
-                    {
-                        kind = LiteralKind.String;
-                        return token.text;
-                    }
-
-                default:
-                    {
-                        throw new ParserException(token, ParserException.Kind.ExpectedLiteral);
-                    }
-            }
-
-        }
-
-        private string ExpectOperator(List<Token> tokens, ref int index)
-        {
-            return ExpectValue(tokens, ref index, Token.Kind.Operator, ParserException.Kind.ExpectedOperator);
-        }
-
         public override ModuleNode Execute(List<Token> tokens)
         {
             int index = 0;
@@ -482,44 +332,6 @@ namespace Phantasma.CodeGen.Languages
             index++;
 
             return block;
-        }
-
-        private int GetOperatorPrecedence(string op)
-        {
-            switch (op)
-            {
-                case "||":
-                case "&&":
-                    return 0;
-
-                case "==":
-                case "!=":
-                    return 1;
-
-                case "<":
-                case ">":
-                case "<=":
-                case ">=":
-                    return 2;
-
-                case "<<":
-                case ">>":
-                    return 3;
-
-                case "+":
-                case "-":
-                    return 4;
-
-                case "*":
-                case "/":
-                case "%":
-                    return 5;
-
-                case "!":
-                    return 6;
-
-                default: throw new Exception("Invalid operator");
-            }
         }
 
         private ExpressionNode ParseExpression(List<Token> tokens, ref int index, CompilerNode owner, int precedence = -1)

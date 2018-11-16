@@ -602,6 +602,7 @@ namespace Phantasma.CodeGen.Core
                 case "*": opcode = Instruction.Opcode.Mul; break;
                 case "/": opcode = Instruction.Opcode.Div; break;
                 case "%": opcode = Instruction.Opcode.Mod; break;
+                case "==": opcode = Instruction.Opcode.Equals; break;
                 default: throw new ArgumentException("Invalid opcode: " + op);
             }
 

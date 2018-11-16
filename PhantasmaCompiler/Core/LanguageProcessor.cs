@@ -15,6 +15,7 @@ namespace Phantasma.CodeGen.Core
     {
         public abstract Lexer Lexer { get; }
         public abstract Parser Parser { get; }
+        public abstract string Description { get; }
 
         public static Language GetLanguage(string extension)
         {

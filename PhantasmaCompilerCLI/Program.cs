@@ -29,23 +29,22 @@ namespace Phantasma.CodeGen
     {
         static void Main(string[] args)
         {
-            var targetFile = "../../Examples/hello.cs";
+            var targetFile = "../../Examples/hello.sol";
             var extension = Path.GetExtension(targetFile);
 
             var src = File.ReadAllText(targetFile);
 
             var language = LanguageProcessor.GetLanguage(extension);
             var processor = LanguageProcessor.GetProcessor(language);
+            Console.WriteLine("Detected language: " + processor.Description);
 
             var tokens = processor.Lexer.Execute(src);
 
-            /*
             Console.WriteLine("****TOKENS***");
             foreach (var token in tokens)
             {
                 Console.WriteLine(token);
-            }*/
-
+            }
 
             Console.WriteLine();
             Console.WriteLine("****TREE***");
