@@ -20,7 +20,7 @@ namespace Phantasma.Tests
             return ExecutionState.Fault;
         }
 
-        public override ExecutionContext LoadContext(Address address)
+        public override ExecutionContext LoadContext(string contextName)
         {
             throw new NotImplementedException();
         }
@@ -125,7 +125,7 @@ namespace Phantasma.Tests
             callSt.method = method;
             module.body = callSt;
 
-            var result = CompileAndExecute(module) as BigInteger;
+            var result = (BigInteger)CompileAndExecute(module);
             Assert.IsTrue(result == 4);
         }
 

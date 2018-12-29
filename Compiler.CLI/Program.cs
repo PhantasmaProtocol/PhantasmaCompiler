@@ -1,6 +1,4 @@
 ﻿using Phantasma.CodeGen.Core;
-using Phantasma.CodeGen.Core.Nodes;
-using Phantasma.Cryptography;
 using Phantasma.Numerics;
 using Phantasma.VM;
 using System;
@@ -20,7 +18,7 @@ namespace Phantasma.CodeGen
             return ExecutionState.Fault;
         }
 
-        public override ExecutionContext LoadContext(Address address)
+        public override ExecutionContext LoadContext(string name)
         {
             throw new NotImplementedException();
         }
